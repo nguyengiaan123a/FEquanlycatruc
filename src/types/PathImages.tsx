@@ -1,0 +1,1 @@
+export const PATH_IMAGES = "https://localhost:7198/Uploads/";
