@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 export const apiClient = axios.create({
-  baseURL: 'https://localhost:7198/', // ✅ đúng API
+  baseURL: 'http://172.19.4.115:5080/', // ✅ đúng API
   withCredentials: true, // ✅ gửi cookie
 });
 

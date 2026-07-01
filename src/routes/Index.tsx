@@ -3,18 +3,35 @@ import { createBrowserRouter, Navigate } from 'react-router-dom';
 import Index from '../pages/Index';
 import Login from '../pages/Login';
 import ProtectedRoute from './ProtectedRoute';
+import ProtectedBlankRoute from './ProtectedBlankRoute';
 import CTMenuManager from '../pages/CTMenuManager';
 
 import MenuManager from '../pages/MenuManager';
 import RoleManager from '../pages/Role/RoleManager';
 import PermissonManager from '../pages/Role/PermissonManager';
 import UserManager from '../pages/UserManager';
-
+import SecurityGuardShiftForm from '../pages/SecurityGuardShiftForm';
+import DriverShiftForm from '../pages/DriverShiftForm';
+import SecurityReportManager from '../pages/SecurityReportManager';
+import DriverReportManager from '../pages/DriverReportManager';
 
 export const router = createBrowserRouter([
   {
     path: '/login',
     element: <Login />,
+  },
+  {
+    element: <ProtectedBlankRoute />, // Pathless layout route
+    children: [
+      {
+        path: 'bao-cao-bao-ve',
+        element: <SecurityGuardShiftForm />,
+      },
+      {
+        path: 'bao-cao-tai-xe',
+        element: <DriverShiftForm />,
+      }
+    ]
   },
   {
     path: '/',
@@ -36,21 +53,26 @@ export const router = createBrowserRouter([
         path: 'quan-ly-menu',
         element: <MenuManager />, // Nội dung Menu sẽ hiện ở Outlet
       },
-         {
+      {
         path: 'quan-ly-role',
         element: <RoleManager />, // Nội dung Menu sẽ hiện ở Outlet
       },
-        {
+      {
         path: 'quan-ly-role/:id/:name', // Đường dẫn có tham số :id
-        element: < PermissonManager/>, // Nội dung Menu sẽ hiện ở Outlet
+        element: < PermissonManager />, // Nội dung Menu sẽ hiện ở Outlet
       },
       {
         path: 'quan-ly-tai-khoan', // Đường dẫn có tham số :id
-        element: < UserManager/>, // Nội dung Menu sẽ hiện ở Outlet
+        element: < UserManager />, // Nội dung Menu sẽ hiện ở Outlet
       },
-
- 
-      
+      {
+        path: 'quan-ly-bao-ve',
+        element: <SecurityReportManager />,
+      },
+      {
+        path: 'quan-ly-tai-xe',
+        element: <DriverReportManager />,
+      },
     ],
   },
   {
