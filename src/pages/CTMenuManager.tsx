@@ -1,4 +1,5 @@
-import { useState, useEffect, FormEvent } from 'react';
+import { useState, useEffect } from 'react';
+import type { FormEvent } from 'react';
 import apiClient from "../services/api";
 import { Edit3, Trash2, Search, Plus, ChevronLeft, ChevronRight, X } from 'lucide-react';
 
@@ -14,7 +15,7 @@ const CTMenuManager = () => {
 
   // State cho Popup xác nhận Xóa
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const [itemToDelete, setItemToDelete] = useState(null);
+  const [itemToDelete, setItemToDelete] = useState<number | null>(null);
 
   // 1. Lấy danh sách Menu test
   const fetchData = async () => {

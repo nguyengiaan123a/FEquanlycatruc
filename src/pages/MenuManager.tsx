@@ -4,7 +4,7 @@ import type { IMenu } from '../types/Menu/IMenu';
 import type { ICategoryGroup } from '../types/Menu/ICategoryGroup';
 import type { IPagination } from '../types/IPagination';
 import type { CategoryMenu } from '../types/Menu/Categorymenu';
-import { Edit3, Trash2, Search, Layers } from 'lucide-react';
+import { Edit3, Trash2, Search, Layers, X } from 'lucide-react';
 
 const MenuManager: React.FC = () => {
   const [groups, setGroups] = useState<ICategoryGroup[]>([]);

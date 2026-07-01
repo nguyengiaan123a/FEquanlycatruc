@@ -293,7 +293,7 @@ export default function DriverReportManager() {
                           <Eye size={18} />
                         </button>
                         <button
-                          onClick={() => handleEdit(r)}
+                          onClick={() => handleEdit()}
                           className="p-2 text-blue-500 hover:bg-blue-50 rounded-lg transition-colors"
                           title="Sửa báo cáo"
                         >
