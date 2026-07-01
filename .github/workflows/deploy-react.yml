@@ -1,0 +1,45 @@
+name: Deploy React Frontend to IIS
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  build-and-deploy:
+    runs-on: [self-hosted, Windows, X64]
+
+    steps:
+    - name: 📥 Tải source code mới nhất về Server
+      uses: actions/checkout@v4
+      with:
+        clean: true # 🌟 Tự động dọn dẹp các file rác, file thừa từ lần chạy trước
+
+    - name: 🛠️ Cài đặt môi trường Node.js 24
+      uses: actions/setup-node@v4
+      with:
+        node-version: '24' 
+
+    - name: 📦 Cài đặt các thư viện (pnpm install)
+      run: pnpm install --prefer-offline
+
+    - name: ⚙️ Build source code React (Vite)
+      run: pnpm run build
+
+    - name: 🚀 Copy đè file lên thư mục web IIS
+      shell: powershell
+      run: Copy-Item -Path ./dist/* -Destination "C:\inetpub\wwwroot\Fequanlycatruc" -Recurse -Force
+
+    # ================= BƯỚC THÊM MỚI ĐỂ DỌN DẸP SUY GIẢM DUNG LƯỢNG =================
+    - name: 🧹 Dọn dẹp thư mục sau khi deploy xong (Post Cleanup)
+      if: always() # Chạy bước này kể cả khi build thành công hay thất bại
+      shell: powershell
+      run: |
+        # Xóa thư mục dist trước
+        if (Test-Path "./dist") { 
+            Remove-Item -Path "./dist" -Recurse -Force -ErrorAction SilentlyContinue 
+        }
+        
+        # Xóa node_modules bằng cách an toàn hơn cho Windows (Sử dụng IO.Directory để tránh lỗi lock file)
+        if (Test-Path "./node_modules") {
+            [System.IO.Directory]::Delete((Get-Item "./node_modules").FullName, $true)
+        }

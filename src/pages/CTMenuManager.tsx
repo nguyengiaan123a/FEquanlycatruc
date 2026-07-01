@@ -16,7 +16,7 @@ const CTMenuManager = () => {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [itemToDelete, setItemToDelete] = useState(null);
 
-  // 1. Lấy danh sách Menu
+  // 1. Lấy danh sách Menu test
   const fetchData = async () => {
     setLoading(true);
     try {
