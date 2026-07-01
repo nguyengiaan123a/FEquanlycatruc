@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { HubConnectionBuilder, HubConnection } from '@microsoft/signalr';
 import apiClient from '../services/api';
 import Chart from 'chart.js/auto';
@@ -121,7 +121,7 @@ export default function SecurityReportManager() {
     setIsDeleteModalOpen(true);
   };
 
-  const handleEdit = (report: any) => {
+  const handleEdit = () => {
     alert('Chức năng sửa báo cáo đang được cập nhật...');
     // TODO: Chuyển hướng sang trang sửa hoặc mở modal
   };

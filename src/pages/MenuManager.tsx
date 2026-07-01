@@ -1,29 +1,25 @@
 import React, { useState, useEffect } from 'react';
 import apiClient from "../services/api";
-import type { IMenu } from '../types/Menu/IMenu'; 
+import type { IMenu } from '../types/Menu/IMenu';
 import type { ICategoryGroup } from '../types/Menu/ICategoryGroup';
 import type { IPagination } from '../types/IPagination';
 import type { CategoryMenu } from '../types/Menu/Categorymenu';
-import { 
-  Edit3, Trash2, Search, Plus, ChevronLeft, 
-  ChevronRight, X, Image as ImageIcon, Link as LinkIcon, 
-  Layers
-} from 'lucide-react';
+import { Edit3, Trash2, Search, Layers } from 'lucide-react';
 
 const MenuManager: React.FC = () => {
   const [groups, setGroups] = useState<ICategoryGroup[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
-  const [searchTerm, setSearchTerm] = useState<string>(''); 
+  const [searchTerm, setSearchTerm] = useState<string>('');
   const [ctMenu, setCtmenu] = useState<CategoryMenu[]>([]);
-  const [pagination, setPagination] = useState<IPagination>({ 
-    currentPage: 1, 
-    totalPages: 1, 
-    pageSize: 10 
+  const [pagination, setPagination] = useState<IPagination>({
+    currentPage: 1,
+    totalPages: 1,
+    pageSize: 10
   });
 
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [editingId, setEditingId] = useState<number | null>(null);
-  
+
   const [formData, setFormData] = useState<Partial<IMenu>>({
     title: '',
     url: '',
@@ -55,7 +51,7 @@ const MenuManager: React.FC = () => {
   const fetchCtMenu = async () => {
     try {
       const response = await apiClient.get('/api/danh-sach-danh-muc-menu', {
-         params: { page: 1, pagesize: 100 }
+        params: { page: 1, pagesize: 100 }
       });
       setCtmenu(response.data.data || []);
     } catch (error) {
@@ -81,7 +77,7 @@ const MenuManager: React.FC = () => {
         url: item.url,
         thumnail: item.thumnail,
         order: Number(item.order),
-        status: Number(item.status), 
+        status: Number(item.status),
         id_menu: Number(item.id_menu)
       });
       setIsModalOpen(true);
@@ -98,7 +94,7 @@ const MenuManager: React.FC = () => {
         ...formData,
         order: Number(formData.order),
         id_menu: Number(formData.id_menu),
-        status: Number(formData.status) 
+        status: Number(formData.status)
       };
 
       if (editingId) {
@@ -106,7 +102,7 @@ const MenuManager: React.FC = () => {
       } else {
         await apiClient.post('/api/Menu', payload);
       }
-      
+
       setIsModalOpen(false);
       resetForm();
       fetchData();
@@ -134,7 +130,7 @@ const MenuManager: React.FC = () => {
 
   return (
     <div className="flex flex-col h-screen w-full overflow-hidden bg-white font-['Arial'] text-black">
-      
+
       {/* Header */}
       <div className="px-6 py-5 bg-white border-b border-gray-100 flex flex-col md:flex-row justify-between items-center gap-4 shrink-0">
         <div>
@@ -147,14 +143,14 @@ const MenuManager: React.FC = () => {
         <div className="flex items-center gap-3 w-full md:w-auto">
           <div className="relative flex-1 md:w-80">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4" />
-            <input 
+            <input
               type="text"
               placeholder="Tìm kiếm..."
               className="w-full pl-10 pr-4 py-2.5 bg-gray-100 border-none rounded-lg focus:ring-1 focus:ring-blue-500 outline-none font-semibold text-sm"
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
-          <button 
+          <button
             onClick={() => { resetForm(); setIsModalOpen(true); }}
             className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-lg font-bold uppercase text-xs tracking-widest transition-all active:scale-95"
           >
@@ -195,29 +191,28 @@ const MenuManager: React.FC = () => {
                       <td className="px-6 py-4 font-bold">{menu.order}</td>
                       <td className="px-6 py-4 text-center">
                         <div className="w-9 h-9 bg-gray-100 rounded flex items-center justify-center mx-auto border border-gray-200 overflow-hidden">
-  {menu.thumnail ? (
-    <img 
-      src={menu.thumnail} 
-      className="w-full h-full object-cover" 
-      alt="Thumbnail" 
-    />
-  ) : (
-    <img 
-      src="https://api.iconify.design/lucide/list.svg?color=%23475569" 
-      className="w-5 h-5" 
-      alt="List Icon" 
-    />
-  )}
-</div>
+                          {menu.thumnail ? (
+                            <img
+                              src={menu.thumnail}
+                              className="w-full h-full object-cover"
+                              alt="Thumbnail"
+                            />
+                          ) : (
+                            <img
+                              src="https://api.iconify.design/lucide/list.svg?color=%23475569"
+                              className="w-5 h-5"
+                              alt="List Icon"
+                            />
+                          )}
+                        </div>
                       </td>
                       <td className="px-6 py-4">
                         <div className="font-bold text-sm">{menu.title}</div>
                         <div className="text-[10px] text-gray-400 font-semibold italic uppercase tracking-tight">{menu.url}</div>
                       </td>
                       <td className="px-6 py-4 text-center">
-                        <span className={`px-3 py-1 rounded-md text-[9px] font-bold uppercase tracking-widest ${
-                          menu.status === 1 ? 'bg-green-50 text-green-700 border border-green-100' : 'bg-red-50 text-red-700 border border-red-100'
-                        }`}>
+                        <span className={`px-3 py-1 rounded-md text-[9px] font-bold uppercase tracking-widest ${menu.status === 1 ? 'bg-green-50 text-green-700 border border-green-100' : 'bg-red-50 text-red-700 border border-red-100'
+                          }`}>
                           {menu.status === 1 ? 'Hoạt động' : 'Đang ẩn'}
                         </span>
                       </td>
@@ -246,35 +241,35 @@ const MenuManager: React.FC = () => {
               </h3>
               <button onClick={() => setIsModalOpen(false)} className="p-1 hover:bg-red-50 rounded-full text-black"><X className="w-5 h-5" /></button>
             </div>
-            
+
             <form onSubmit={handleSubmit} className="p-6 grid grid-cols-2 gap-4">
               <div className="col-span-2">
                 <label className="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-1 block">Tên menu</label>
-                <input required type="text" className="w-full bg-gray-50 border border-gray-200 rounded-lg p-3 text-sm font-bold outline-none focus:border-blue-500" value={formData.title} onChange={(e) => setFormData({...formData, title: e.target.value})} />
+                <input required type="text" className="w-full bg-gray-50 border border-gray-200 rounded-lg p-3 text-sm font-bold outline-none focus:border-blue-500" value={formData.title} onChange={(e) => setFormData({ ...formData, title: e.target.value })} />
               </div>
 
               <div className="col-span-2">
                 <label className="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-1 block">Đường dẫn (URL)</label>
-                <input type="text" className="w-full bg-gray-50 border border-gray-200 rounded-lg p-3 text-sm font-bold outline-none focus:border-blue-500" value={formData.url} onChange={(e) => setFormData({...formData, url: e.target.value})} />
+                <input type="text" className="w-full bg-gray-50 border border-gray-200 rounded-lg p-3 text-sm font-bold outline-none focus:border-blue-500" value={formData.url} onChange={(e) => setFormData({ ...formData, url: e.target.value })} />
               </div>
 
               <div className="col-span-2">
                 <label className="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-1 block">Link ảnh (Thumbnail)</label>
-                <input type="text" className="w-full bg-gray-50 border border-gray-200 rounded-lg p-3 text-sm font-bold outline-none focus:border-blue-500" value={formData.thumnail} onChange={(e) => setFormData({...formData, thumnail: e.target.value})} />
+                <input type="text" className="w-full bg-gray-50 border border-gray-200 rounded-lg p-3 text-sm font-bold outline-none focus:border-blue-500" value={formData.thumnail} onChange={(e) => setFormData({ ...formData, thumnail: e.target.value })} />
               </div>
 
               <div>
                 <label className="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-1 block">Thứ tự</label>
-                <input type="number" className="w-full bg-gray-50 border border-gray-200 rounded-lg p-3 text-sm font-bold outline-none" value={formData.order} onChange={(e) => setFormData({...formData, order: parseInt(e.target.value)})} />
+                <input type="number" className="w-full bg-gray-50 border border-gray-200 rounded-lg p-3 text-sm font-bold outline-none" value={formData.order} onChange={(e) => setFormData({ ...formData, order: parseInt(e.target.value) })} />
               </div>
 
               <div>
                 <label className="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-1 block">Trạng thái</label>
-                <select 
-                  className="w-full bg-gray-50 border border-gray-200 rounded-lg p-3 text-sm font-bold outline-none" 
-                  value={formData.status} 
+                <select
+                  className="w-full bg-gray-50 border border-gray-200 rounded-lg p-3 text-sm font-bold outline-none"
+                  value={formData.status}
                   // QUAN TRỌNG: Phải dùng parseInt để status luôn là Number
-                  onChange={(e) => setFormData({...formData, status: parseInt(e.target.value)})}
+                  onChange={(e) => setFormData({ ...formData, status: parseInt(e.target.value) })}
                 >
                   <option value={1}>HIỆN (ACTIVE)</option>
                   <option value={0}>ẨN (HIDDEN)</option>
@@ -303,12 +298,12 @@ const MenuManager: React.FC = () => {
       {isDeleteModalOpen && (
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-[1000] p-4">
           <div className="bg-white rounded-2xl p-8 max-w-sm w-full text-center shadow-2xl">
-             <h3 className="text-sm font-bold uppercase tracking-widest mb-2">Xác nhận xóa?</h3>
-             <p className="text-gray-400 text-xs font-bold uppercase mb-8">Dữ liệu sẽ bị gỡ khỏi hệ thống</p>
-             <div className="flex gap-3">
-                <button onClick={() => setIsDeleteModalOpen(false)} className="flex-1 py-3 bg-gray-100 rounded-lg font-bold text-[10px] uppercase tracking-wider">Hủy</button>
-                <button onClick={handleDelete} className="flex-1 py-3 bg-red-600 text-white rounded-lg font-bold text-[10px] uppercase tracking-wider">Xóa ngay</button>
-             </div>
+            <h3 className="text-sm font-bold uppercase tracking-widest mb-2">Xác nhận xóa?</h3>
+            <p className="text-gray-400 text-xs font-bold uppercase mb-8">Dữ liệu sẽ bị gỡ khỏi hệ thống</p>
+            <div className="flex gap-3">
+              <button onClick={() => setIsDeleteModalOpen(false)} className="flex-1 py-3 bg-gray-100 rounded-lg font-bold text-[10px] uppercase tracking-wider">Hủy</button>
+              <button onClick={handleDelete} className="flex-1 py-3 bg-red-600 text-white rounded-lg font-bold text-[10px] uppercase tracking-wider">Xóa ngay</button>
+            </div>
           </div>
         </div>
       )}

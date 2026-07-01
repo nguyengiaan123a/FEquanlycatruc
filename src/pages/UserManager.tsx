@@ -21,9 +21,9 @@ interface UserFormData {
   roleName: string;
 }
 
-interface role{
-    id: string;
-    name: string;
+interface role {
+  id: string;
+  name: string;
 }
 
 const UserManager: React.FC = () => {
@@ -32,10 +32,10 @@ const UserManager: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [pagination, setPagination] = useState({ currentPage: 1, totalPages: 1, pageSize: 15 });
   const [roles, setRoles] = useState<role[]>([]);
-  
+
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [editingId, setEditingId] = useState<string | null>(null);
-  
+
   // Khởi tạo formData chuẩn theo cấu trúc bạn cung cấp
   const initialFormState: UserFormData = {
     username: '',
@@ -68,14 +68,14 @@ const UserManager: React.FC = () => {
     }
   };
   //2.lấy danh sách role
-    const fetchRoles = async () => {
+  const fetchRoles = async () => {
     try {
-        const response = await apiClient.get('/api/Role', { params: { page: 1, pagesize: 1000  ,search: ""} });
-        setRoles(response.data.data || []);
+      const response = await apiClient.get('/api/Role', { params: { page: 1, pagesize: 1000, search: "" } });
+      setRoles(response.data.data || []);
     } catch (error) {
-        console.error("Lỗi lấy danh sách role:", error);
-    }    
-    };
+      console.error("Lỗi lấy danh sách role:", error);
+    }
+  };
 
 
   useEffect(() => {
@@ -134,15 +134,15 @@ const UserManager: React.FC = () => {
   const openEdit = (item: any) => {
     setEditingId(item.id);
     // Format lại ngày tháng cho thẻ <input type="date" />
-    const formattedDate = item.dateofBird 
-      ? item.dateofBird.split('T')[0] 
+    const formattedDate = item.dateofBird
+      ? item.dateofBird.split('T')[0]
       : initialFormState.dateofBird;
 
-    setFormData({ 
-      username: item.username || item.userName || '', 
+    setFormData({
+      username: item.username || item.userName || '',
       password: item.password || '', // Luôn để trống password khi mở form sửa
-      fullname: item.fullname || item.fullName || '', 
-      gender: item.gender ?? 0, 
+      fullname: item.fullname || item.fullName || '',
+      gender: item.gender ?? 0,
       dateofBird: formattedDate,
       roleName: item.role || 'CUSTOMER'
     });
@@ -156,7 +156,7 @@ const UserManager: React.FC = () => {
 
   return (
     <div className="flex flex-col h-[calc(100vh-80px)] w-full overflow-hidden bg-white font-sans text-gray-800">
-      
+
       {/* Header */}
       <div className="px-5 py-3 border-b border-gray-200 flex flex-col md:flex-row justify-between items-center gap-3 bg-white shrink-0">
         <div>
@@ -167,14 +167,14 @@ const UserManager: React.FC = () => {
         <div className="flex items-center gap-2 w-full md:w-auto">
           <div className="relative flex-1 md:w-64">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4" />
-            <input 
+            <input
               type="text"
               placeholder="Tìm tên hoặc tài khoản..."
               className="w-full pl-9 pr-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm transition-all"
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
-          <button 
+          <button
             onClick={() => { resetForm(); setIsModalOpen(true); }}
             className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-semibold flex items-center gap-2 transition-all active:scale-95 text-sm whitespace-nowrap"
           >
@@ -220,12 +220,12 @@ const UserManager: React.FC = () => {
                     </div>
                   </td>
                   <td className="px-5 py-3 text-sm font-medium text-gray-700">
-                    {item.fullName || item.fullname}
+                    {item.fullName}
                   </td>
                   <td className="px-5 py-3 text-center">
                     <span className="px-2 py-1 rounded text-[10px] font-bold uppercase bg-purple-50 text-purple-700 border border-purple-200 flex items-center justify-center gap-1 w-max mx-auto">
                       <Shield className="w-3 h-3" />
-                      {item.role || 'N/A'}
+                      {item.roleName || 'N/A'}
                     </span>
                   </td>
                   <td className="px-5 py-3">
@@ -245,16 +245,16 @@ const UserManager: React.FC = () => {
       <div className="px-5 py-3 bg-gray-50 border-t border-gray-200 flex items-center justify-between shrink-0 text-xs">
         <span className="font-medium text-gray-500">Trang {pagination.currentPage} / {pagination.totalPages}</span>
         <div className="flex gap-1">
-          <button 
+          <button
             disabled={pagination.currentPage === 1}
-            onClick={() => setPagination({...pagination, currentPage: pagination.currentPage - 1})}
+            onClick={() => setPagination({ ...pagination, currentPage: pagination.currentPage - 1 })}
             className="p-1.5 border border-gray-300 rounded bg-white hover:bg-gray-100 disabled:opacity-30 text-gray-600"
           >
             <ChevronLeft className="w-4 h-4" />
           </button>
-          <button 
+          <button
             disabled={pagination.currentPage === pagination.totalPages || pagination.totalPages === 0}
-            onClick={() => setPagination({...pagination, currentPage: pagination.currentPage + 1})}
+            onClick={() => setPagination({ ...pagination, currentPage: pagination.currentPage + 1 })}
             className="p-1.5 border border-gray-300 rounded bg-white hover:bg-gray-100 disabled:opacity-30 text-gray-600"
           >
             <ChevronRight className="w-4 h-4" />
@@ -270,28 +270,28 @@ const UserManager: React.FC = () => {
               <h3 className="text-sm font-bold uppercase text-gray-700">{editingId ? 'Chỉnh sửa Tài khoản' : 'Tạo Tài khoản mới'}</h3>
               <button onClick={() => setIsModalOpen(false)} className="text-gray-400 hover:text-red-500 transition-all"><X className="w-5 h-5" /></button>
             </div>
-            
+
             <form onSubmit={handleSubmit} className="p-5 space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-[11px] font-bold text-gray-500 uppercase mb-1">Tài khoản (Username)</label>
-                  <input required type="text" disabled={!!editingId} className="w-full bg-gray-50 border border-gray-200 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none disabled:opacity-60" value={formData.username} onChange={(e) => setFormData({...formData, username: e.target.value})} placeholder="Nhập tên đăng nhập" />
+                  <input required type="text" disabled={!!editingId} className="w-full bg-gray-50 border border-gray-200 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none disabled:opacity-60" value={formData.username} onChange={(e) => setFormData({ ...formData, username: e.target.value })} placeholder="Nhập tên đăng nhập" />
                 </div>
                 <div>
                   <label className="block text-[11px] font-bold text-gray-500 uppercase mb-1">Mật khẩu</label>
-                  <input required={!editingId} type="password" className="w-full bg-gray-50 border border-gray-200 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none" value={formData.password} onChange={(e) => setFormData({...formData, password: e.target.value})} placeholder={editingId ? "Bỏ trống nếu không đổi" : "Nhập mật khẩu"} />
+                  <input required={!editingId} type="password" className="w-full bg-gray-50 border border-gray-200 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none" value={formData.password} onChange={(e) => setFormData({ ...formData, password: e.target.value })} placeholder={editingId ? "Bỏ trống nếu không đổi" : "Nhập mật khẩu"} />
                 </div>
               </div>
 
               <div>
                 <label className="block text-[11px] font-bold text-gray-500 uppercase mb-1">Họ và tên (Fullname)</label>
-                <input required type="text" className="w-full bg-gray-50 border border-gray-200 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none" value={formData.fullname} onChange={(e) => setFormData({...formData, fullname: e.target.value})} placeholder="Nhập họ và tên đầy đủ" />
+                <input required type="text" className="w-full bg-gray-50 border border-gray-200 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none" value={formData.fullname} onChange={(e) => setFormData({ ...formData, fullname: e.target.value })} placeholder="Nhập họ và tên đầy đủ" />
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-[11px] font-bold text-gray-500 uppercase mb-1">Giới tính</label>
-                  <select className="w-full bg-gray-50 border border-gray-200 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none font-medium text-gray-700" value={formData.gender} onChange={(e) => setFormData({...formData, gender: parseInt(e.target.value)})}>
+                  <select className="w-full bg-gray-50 border border-gray-200 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none font-medium text-gray-700" value={formData.gender} onChange={(e) => setFormData({ ...formData, gender: parseInt(e.target.value) })}>
                     <option value={0}>Nam</option>
                     <option value={1}>Nữ</option>
                     <option value={2}>Khác</option>
@@ -299,13 +299,13 @@ const UserManager: React.FC = () => {
                 </div>
                 <div>
                   <label className="block text-[11px] font-bold text-gray-500 uppercase mb-1">Ngày sinh</label>
-                  <input required type="date" className="w-full bg-gray-50 border border-gray-200 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none text-gray-700" value={formData.dateofBird} onChange={(e) => setFormData({...formData, dateofBird: e.target.value})} />
+                  <input required type="date" className="w-full bg-gray-50 border border-gray-200 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none text-gray-700" value={formData.dateofBird} onChange={(e) => setFormData({ ...formData, dateofBird: e.target.value })} />
                 </div>
               </div>
 
               <div>
                 <label className="block text-[11px] font-bold text-gray-500 uppercase mb-1">Phân quyền (RoleName)</label>
-                <select className="w-full bg-gray-50 border border-gray-200 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none font-medium text-gray-700" value={formData.roleName} onChange={(e) => setFormData({...formData, roleName: e.target.value})}>
+                <select className="w-full bg-gray-50 border border-gray-200 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none font-medium text-gray-700" value={formData.roleName} onChange={(e) => setFormData({ ...formData, roleName: e.target.value })}>
                   <option value="">-- Chọn phân quyền --</option>
                   {roles.map((role) => (
                     <option key={role.id} value={role.name}>

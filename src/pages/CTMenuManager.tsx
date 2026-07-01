@@ -1,13 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect, FormEvent } from 'react';
 import apiClient from "../services/api";
-import { Edit3, Trash2, Search, Plus, ChevronLeft, ChevronRight, X, Image as ImageIcon } from 'lucide-react';
+import { Edit3, Trash2, Search, Plus, ChevronLeft, ChevronRight, X } from 'lucide-react';
 
 const CTMenuManager = () => {
-  const [menus, setMenus] = useState([]);
+  const [menus, setMenus] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [pagination, setPagination] = useState({ currentPage: 1, totalPages: 1, pageSize: 15 });
-  
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingId, setEditingId] = useState(null);
   const [formData, setFormData] = useState({ title: '', order: 0, status: 1, thumnail: '' });
@@ -37,7 +37,7 @@ const CTMenuManager = () => {
   }, [pagination.currentPage, searchTerm]);
 
   // 2. Thêm mới hoặc Cập nhật (Theo Swagger: /api/CTmenu)
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
       if (editingId) {
@@ -68,18 +68,18 @@ const CTMenuManager = () => {
     }
   };
 
-  const confirmDelete = (id) => {
+  const confirmDelete = (id: number) => {
     setItemToDelete(id);
     setIsDeleteModalOpen(true);
   };
 
-  const openEdit = (item) => {
+  const openEdit = (item: any) => {
     setEditingId(item.id);
-    setFormData({ 
-      title: item.title, 
-      order: item.order, 
-      status: item.status, 
-      thumnail: item.thumnail || '' 
+    setFormData({
+      title: item.title,
+      order: item.order,
+      status: item.status,
+      thumnail: item.thumnail || ''
     });
     setIsModalOpen(true);
   };
@@ -91,7 +91,7 @@ const CTMenuManager = () => {
 
   return (
     <div className="flex flex-col h-[calc(100vh-80px)] w-full overflow-hidden bg-white font-sans text-gray-800">
-      
+
       {/* Header */}
       <div className="px-5 py-3 border-b border-gray-200 flex flex-col md:flex-row justify-between items-center gap-3 bg-white shrink-0">
         <div>
@@ -102,14 +102,14 @@ const CTMenuManager = () => {
         <div className="flex items-center gap-2 w-full md:w-auto">
           <div className="relative flex-1 md:w-64">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4" />
-            <input 
+            <input
               type="text"
               placeholder="Tìm kiếm..."
               className="w-full pl-9 pr-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm transition-all"
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
-          <button 
+          <button
             onClick={() => { resetForm(); setIsModalOpen(true); }}
             className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-semibold flex items-center gap-2 transition-all active:scale-95 text-sm whitespace-nowrap"
           >
@@ -133,9 +133,9 @@ const CTMenuManager = () => {
           </thead>
           <tbody className="divide-y divide-gray-100">
             {loading ? (
-              <tr><td colSpan="5" className="text-center py-10"><div className="inline-block animate-spin rounded-full h-8 w-8 border-2 border-blue-500 border-t-transparent"></div></td></tr>
+              <tr><td colSpan={5} className="text-center py-10"><div className="inline-block animate-spin rounded-full h-8 w-8 border-2 border-blue-500 border-t-transparent"></div></td></tr>
             ) : menus.length === 0 ? (
-              <tr><td colSpan="5" className="text-center py-10 text-sm text-gray-400">Không tìm thấy dữ liệu</td></tr>
+              <tr><td colSpan={5} className="text-center py-10 text-sm text-gray-400">Không tìm thấy dữ liệu</td></tr>
             ) : (
               menus.map((item) => (
                 <tr key={item.id} className="hover:bg-gray-50/80 transition-colors">
@@ -143,11 +143,11 @@ const CTMenuManager = () => {
                   <td className="px-5 py-3">
                     <div className="w-8 h-8 bg-gray-100 rounded flex items-center justify-center mx-auto border border-gray-200 overflow-hidden">
                       {item.thumnail ? (
-                        <img 
-                          src={item.thumnail} 
-                          className="w-full h-full object-cover" 
-                          alt="icon" 
-                          onError={(e) => { e.target.src = 'https://api.iconify.design/lucide/image-off.svg?color=%23cbd5e1'; }}
+                        <img
+                          src={item.thumnail}
+                          className="w-full h-full object-cover"
+                          alt="icon"
+                          onError={(e) => { (e.target as HTMLImageElement).src = 'https://api.iconify.design/lucide/image-off.svg?color=%23cbd5e1'; }}
                         />
                       ) : (
                         <img src="https://api.iconify.design/lucide/list.svg?color=%23475569" className="w-4 h-4" />
@@ -159,9 +159,8 @@ const CTMenuManager = () => {
                     <div className="text-[10px] text-gray-400 uppercase tracking-tighter">ID: {item.id}</div>
                   </td>
                   <td className="px-5 py-3 text-center">
-                    <span className={`px-2 py-1 rounded text-[10px] font-bold uppercase ${
-                      item.status === 1 ? 'bg-green-50 text-green-700 border border-green-200' : 'bg-red-50 text-red-700 border border-red-200'
-                    }`}>
+                    <span className={`px-2 py-1 rounded text-[10px] font-bold uppercase ${item.status === 1 ? 'bg-green-50 text-green-700 border border-green-200' : 'bg-red-50 text-red-700 border border-red-200'
+                      }`}>
                       {item.status === 1 ? 'Hoạt động' : 'Đang ẩn'}
                     </span>
                   </td>
@@ -182,16 +181,16 @@ const CTMenuManager = () => {
       <div className="px-5 py-3 bg-gray-50 border-t border-gray-200 flex items-center justify-between shrink-0 text-xs">
         <span className="font-medium text-gray-500">Trang {pagination.currentPage} / {pagination.totalPages}</span>
         <div className="flex gap-1">
-          <button 
+          <button
             disabled={pagination.currentPage === 1}
-            onClick={() => setPagination({...pagination, currentPage: pagination.currentPage - 1})}
+            onClick={() => setPagination({ ...pagination, currentPage: pagination.currentPage - 1 })}
             className="p-1.5 border border-gray-300 rounded bg-white hover:bg-gray-100 disabled:opacity-30 text-gray-600"
           >
             <ChevronLeft className="w-4 h-4" />
           </button>
-          <button 
+          <button
             disabled={pagination.currentPage === pagination.totalPages}
-            onClick={() => setPagination({...pagination, currentPage: pagination.currentPage + 1})}
+            onClick={() => setPagination({ ...pagination, currentPage: pagination.currentPage + 1 })}
             className="p-1.5 border border-gray-300 rounded bg-white hover:bg-gray-100 disabled:opacity-30 text-gray-600"
           >
             <ChevronRight className="w-4 h-4" />
@@ -207,26 +206,26 @@ const CTMenuManager = () => {
               <h3 className="text-sm font-bold uppercase text-gray-700">{editingId ? 'Chỉnh sửa Menu' : 'Thêm danh mục mới'}</h3>
               <button onClick={() => setIsModalOpen(false)} className="text-gray-400 hover:text-red-500 transition-all"><X className="w-5 h-5" /></button>
             </div>
-            
+
             <form onSubmit={handleSubmit} className="p-5 space-y-4">
               <div>
                 <label className="block text-[11px] font-bold text-gray-500 uppercase mb-1">Tên danh mục</label>
-                <input required type="text" className="w-full bg-gray-50 border border-gray-200 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none" value={formData.title} onChange={(e) => setFormData({...formData, title: e.target.value})} />
+                <input required type="text" className="w-full bg-gray-50 border border-gray-200 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none" value={formData.title} onChange={(e) => setFormData({ ...formData, title: e.target.value })} />
               </div>
 
               <div>
                 <label className="block text-[11px] font-bold text-gray-500 uppercase mb-1">Link Icon (URL)</label>
                 <div className="flex gap-2 items-center">
-                  <input 
-                    type="url" 
+                  <input
+                    type="url"
                     placeholder="https://api.iconify.design/..."
-                    className="w-full bg-gray-50 border border-gray-200 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none" 
-                    value={formData.thumnail} 
-                    onChange={(e) => setFormData({...formData, thumnail: e.target.value})} 
+                    className="w-full bg-gray-50 border border-gray-200 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+                    value={formData.thumnail}
+                    onChange={(e) => setFormData({ ...formData, thumnail: e.target.value })}
                   />
                   {formData.thumnail && (
                     <div className="w-10 h-10 shrink-0 bg-white border border-gray-200 rounded-lg p-1">
-                      <img src={formData.thumnail} alt="preview" className="w-full h-full object-contain" onError={(e) => e.target.style.opacity='0'} />
+                      <img src={formData.thumnail} alt="preview" className="w-full h-full object-contain" onError={(e) => (e.target as HTMLImageElement).style.opacity = '0'} />
                     </div>
                   )}
                 </div>
@@ -235,11 +234,11 @@ const CTMenuManager = () => {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-[11px] font-bold text-gray-500 uppercase mb-1">Thứ tự</label>
-                  <input type="number" className="w-full bg-gray-50 border border-gray-200 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none" value={formData.order} onChange={(e) => setFormData({...formData, order: parseInt(e.target.value)})} />
+                  <input type="number" className="w-full bg-gray-50 border border-gray-200 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none" value={formData.order} onChange={(e) => setFormData({ ...formData, order: parseInt(e.target.value) })} />
                 </div>
                 <div>
                   <label className="block text-[11px] font-bold text-gray-500 uppercase mb-1">Trạng thái</label>
-                  <select className="w-full bg-gray-50 border border-gray-200 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none font-medium" value={formData.status} onChange={(e) => setFormData({...formData, status: parseInt(e.target.value)})}>
+                  <select className="w-full bg-gray-50 border border-gray-200 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none font-medium" value={formData.status} onChange={(e) => setFormData({ ...formData, status: parseInt(e.target.value) })}>
                     <option value={1}>Hiện (Active)</option>
                     <option value={0}>Ẩn (Hidden)</option>
                   </select>

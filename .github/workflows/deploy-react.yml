@@ -1,5 +1,4 @@
 name: Deploy React Frontend to IIS
-
 on:
   push:
     branches: [ "main" ]
@@ -7,39 +6,55 @@ on:
 jobs:
   build-and-deploy:
     runs-on: [self-hosted, Windows, X64]
-
     steps:
     - name: 📥 Tải source code mới nhất về Server
       uses: actions/checkout@v4
       with:
-        clean: true # 🌟 Tự động dọn dẹp các file rác, file thừa từ lần chạy trước
+        clean: true
 
-    - name: 🛠️ Cài đặt môi trường Node.js 24
+    - name: 📦 Cài đặt pnpm
+      uses: pnpm/action-setup@v4
+      with:
+        version: 9 # Khai báo để action tự động cấu hình pnpm
+
+    - name: 🛠️ Cài đặt môi trường Node.js 22 (LTS)
       uses: actions/setup-node@v4
       with:
-        node-version: '24' 
+        node-version: '22' # Hoặc '24' nếu project bắt buộc
+        cache: 'pnpm' # Bật cache tự động cho pnpm để install cực nhanh ở lần sau
 
-    - name: 📦 Cài đặt các thư viện (pnpm install)
+    - name: 📥 Cài đặt các thư viện (pnpm install)
       run: pnpm install --prefer-offline
 
     - name: ⚙️ Build source code React (Vite)
       run: pnpm run build
 
-    - name: 🚀 Copy đè file lên thư mục web IIS
-      shell: powershell
-      run: Copy-Item -Path ./dist/* -Destination "C:\inetpub\wwwroot\Fequanlycatruc" -Recurse -Force
-
-    # ================= BƯỚC THÊM MỚI ĐỂ DỌN DẸP SUY GIẢM DUNG LƯỢNG =================
-    - name: 🧹 Dọn dẹp thư mục sau khi deploy xong (Post Cleanup)
-      if: always() # Chạy bước này kể cả khi build thành công hay thất bại
+    - name: 🧹 Dọn dẹp IIS & 🚀 Copy code mới lên Web Server
       shell: powershell
       run: |
-        # Xóa thư mục dist trước
+        $targetPath = "C:\inetpub\wwwroot\Fequanlycatruc"
+        
+        # 1. Tạo thư mục nếu chưa tồn tại
+        if (!(Test-Path $targetPath)) {
+            New-Item -ItemType Directory -Force -Path $targetPath
+        }
+        
+        # 2. Xóa các file cũ trong IIS để dọn rác (Giữ lại web.config nếu cấu hình rewrite URL)
+        Get-ChildItem -Path $targetPath -Exclude "web.config" | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue
+        
+        # 3. Copy file mới từ thư mục dist vào IIS
+        Copy-Item -Path ./dist/* -Destination $targetPath -Recurse -Force
+
+    # ================= BƯỚC DỌN DẸP WORKSPACE =================
+    - name: 🧹 Dọn dẹp thư mục sau khi deploy xong
+      if: always()
+      shell: powershell
+      run: |
+        # Chỉ xóa thư mục dist để dọn dẹp file build thừa
         if (Test-Path "./dist") { 
             Remove-Item -Path "./dist" -Recurse -Force -ErrorAction SilentlyContinue 
         }
         
-        # Xóa node_modules bằng cách an toàn hơn cho Windows (Sử dụng IO.Directory để tránh lỗi lock file)
-        if (Test-Path "./node_modules") {
-            [System.IO.Directory]::Delete((Get-Item "./node_modules").FullName, $true)
-        }
+        # Lưu ý: Đã BỎ xóa node_modules. 
+        # Việc giữ lại node_modules trên self-hosted runner kết hợp với step 'setup-node cache' 
+        # sẽ giúp các lần deploy sau giảm thời gian từ vài phút xuống còn vài giây.
